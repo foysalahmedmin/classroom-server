@@ -1,17 +1,16 @@
+import AppResponse from '../../builder/responses/AppResponse';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { courseServices } from './course.service';
+import { CourseServices } from './course.service';
 
 const createCourse = catchAsync(async (req, res) => {
   const payload = req.body;
-  const result = courseServices.createCourseIntoDB(payload);
+  const result = await CourseServices.createCourseIntoDB(payload);
 
-  sendResponse(res, {
-    success: true,
-    statusCode: 201,
-    messages: 'Course created successfully',
-    data: result,
-  });
+  sendResponse(
+    res,
+    new AppResponse(true, 201, 'Course created successfully', result),
+  );
 });
 
 export const CourseControllers = {
