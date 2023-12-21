@@ -6,6 +6,12 @@ const createCourseCategoryIntoDB = async (payload: TCourseCategory) => {
   return result;
 };
 
+const getAllCourseCategoryIntoDB = async () => {
+  const result = await CourseCategory.find();
+  return result;
+};
+
 export const CourseCategoryServices = {
   createCourseCategoryIntoDB,
+  getAllCourseCategoryIntoDB,
 };

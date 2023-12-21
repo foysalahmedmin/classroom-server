@@ -10,10 +10,21 @@ const createCourseCategory = catchAsync(async (req, res) => {
 
   sendResponse(
     res,
-    new AppResponse(true, 201, 'Course created successfully', result),
+    new AppResponse(true, 201, 'Category created successfully', result),
+  );
+});
+
+const getAllCourseCategory = catchAsync(async (req, res) => {
+  const payload = req.body;
+  const result = await CourseCategoryServices.getAllCourseCategoryIntoDB();
+
+  sendResponse(
+    res,
+    new AppResponse(true, 200, 'Categories retrieved successfully', result),
   );
 });
 
 export const CourseCategoryControllers = {
   createCourseCategory,
+  getAllCourseCategory,
 };

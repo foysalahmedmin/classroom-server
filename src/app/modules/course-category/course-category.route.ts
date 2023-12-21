@@ -13,4 +13,6 @@ router.post(
   CourseCategoryControllers.createCourseCategory,
 );
 
+router.get('/', CourseCategoryControllers.getAllCourseCategory);
+
 export const CourseCategoryRoute = router;
