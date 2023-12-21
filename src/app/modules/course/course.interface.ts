@@ -22,4 +22,5 @@ export interface TCourse {
   provider: string;
   durationInWeeks?: number;
   details: TCourseDetail;
+  isDeleted?: boolean;
 }
