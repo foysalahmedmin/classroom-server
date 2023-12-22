@@ -1,7 +1,7 @@
 import { SortOrder } from 'mongoose';
-import { sortableFields } from '../modules/course/course.constant';
+import { courseSortableFields } from '../modules/course/course.constant';
 
-const queryModifier = (query: Record<string, unknown>) => {
+const courseQueryModifier = (query: Record<string, unknown>) => {
   const { page, limit, sortBy, sortOrder, ...restQueries } = query;
   const {
     minPrice,
@@ -45,7 +45,7 @@ const queryModifier = (query: Record<string, unknown>) => {
   const sortByArr = (sortBy as string)?.split(',');
   if (sortByArr) {
     sortByArr.forEach((el: string) => {
-      if (sortableFields.includes(el)) {
+      if (courseSortableFields.includes(el)) {
         sortModifiedQuery[el] = sortOrder === 'asc' ? 1 : -1;
       }
     });
@@ -57,4 +57,4 @@ const queryModifier = (query: Record<string, unknown>) => {
   };
 };
 
-export default queryModifier;
+export default courseQueryModifier;

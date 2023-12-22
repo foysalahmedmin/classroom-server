@@ -1,5 +1,5 @@
-export const searchableFields = ['title'];
-export const sortableFields = [
+export const courseSearchableFields = ['title'];
+export const courseSortableFields = [
   'title',
   'price',
   'startDate',
