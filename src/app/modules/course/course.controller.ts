@@ -13,6 +13,17 @@ const createCourse = catchAsync(async (req, res) => {
   );
 });
 
+const getAllCourse = catchAsync(async (req, res) => {
+  const query = req.query;
+  const result = await CourseServices.getAllCourseFromDB(query);
+
+  sendResponse(
+    res,
+    new AppResponse(true, 200, 'Courses retrieved successfully', result),
+  );
+});
+
 export const CourseControllers = {
   createCourse,
+  getAllCourse,
 };

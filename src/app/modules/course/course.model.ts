@@ -37,7 +37,6 @@ const courseSchema = new Schema<TCourse>(
     toJSON: {
       virtuals: true,
     },
-    timestamps: true,
   },
 );
 
@@ -45,7 +44,7 @@ courseSchema.virtual('durationInWeeks').get(function () {
   const durationInMillisecond =
     this.endDate.getTime() - this.startDate.getTime();
   const durationInWeeks = Math.ceil(
-    Math.abs(durationInMillisecond) * (1000 * 60 * 60 * 24 * 7),
+    Math.abs(durationInMillisecond) / (1000 * 60 * 60 * 24 * 7),
   );
   return durationInWeeks;
 });
