@@ -12,5 +12,6 @@ router.post(
 );
 
 router.get('/courses', CourseControllers.getAllCourse);
+router.get('/courses/:_id/reviews', CourseControllers.getAllCourseWithReviews);
 
 export const CourseRoute = router;
