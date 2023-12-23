@@ -1,4 +1,3 @@
-// import { AppQueryCourse } from '../../builder/operations/AppQuery';
 import mongoose from 'mongoose';
 import AppError from '../../builder/errors/AppError';
 import courseQueryModifier from '../../utils/queryModifier';
@@ -11,17 +10,6 @@ const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
   return result;
 };
-
-// const getAllCourseFromDB = async (query: Record<string, unknown>) => {
-//   const courseQuery = new AppQueryCourse(Course.find(), query)
-//     .search(searchableFields)
-//     .filter()
-//     .sort(sortableFields)
-//     .paginate()
-//     .fields();
-//   const result = await courseQuery.queryModel;
-//   return result;
-// };
 
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   const { filterModifiedQuery, sortModifiedQuery } = courseQueryModifier(query);
@@ -167,19 +155,6 @@ const getUpdateCourseIntoDB = async (
     session.endSession();
   }
 };
-
-// const getUpdateCourseIntoDB = async (
-//   _id: string,
-//   payload: Partial<TCourse>,
-// ) => {
-//   const modifiedUpdateData = await courseUpdateDataModifier(payload);
-
-//   const result = await Course.findByIdAndUpdate(_id, modifiedUpdateData, {
-//     new: true,
-//   });
-
-//   return result;
-// };
 
 export const CourseServices = {
   createCourseIntoDB,
