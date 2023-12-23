@@ -14,13 +14,25 @@ const createCourseIntoDB = async (payload: TCourse) => {
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   const { filterModifiedQuery, sortModifiedQuery } = courseQueryModifier(query);
   const page = Number(query.page) || 1;
-  const limit = Number(query.limit);
+  const limit = Number(query.limit) || 10;
   const skip = (page - 1) * limit;
   const result = await Course.find(filterModifiedQuery)
     .sort(sortModifiedQuery)
     .skip(skip)
     .limit(limit);
-  return result;
+
+  const totalCourses = await Course.countDocuments(filterModifiedQuery);
+
+  const meta = {
+    page,
+    limit,
+    totalCourses,
+  };
+
+  return {
+    meta,
+    result,
+  };
 };
 
 const getSingleCourseWithReviewsFromDB = async (_id: string) => {

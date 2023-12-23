@@ -3,4 +3,5 @@ export type TResponse<T> = {
   statusCode: number;
   messages?: string;
   data: T;
+  meta?: Record<string, unknown>;
 };
