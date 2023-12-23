@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 
 export interface TCourseTags {
   name: string;
-  isDeleted: boolean;
+  isDeleted?: boolean;
 }
 
 export interface TCourseDetail {

@@ -1,19 +1,29 @@
 import mongoose, { Query, Schema } from 'mongoose';
 import { TCourse, TCourseDetail, TCourseTags } from './course.interface';
 
-const courseTagsSchema = new Schema<TCourseTags>({
-  name: { type: String, required: true },
-  isDeleted: { type: Boolean, required: true },
-});
-
-const courseDetailSchema = new Schema<TCourseDetail>({
-  level: {
-    type: String,
-    enum: ['Beginner', 'Intermediate', 'Advanced'],
-    required: true,
+const courseTagsSchema = new Schema<TCourseTags>(
+  {
+    name: { type: String, required: true },
+    isDeleted: { type: Boolean },
   },
-  description: { type: String, required: true },
-});
+  {
+    _id: false,
+  },
+);
+
+const courseDetailSchema = new Schema<TCourseDetail>(
+  {
+    level: {
+      type: String,
+      enum: ['Beginner', 'Intermediate', 'Advanced'],
+      required: true,
+    },
+    description: { type: String, required: true },
+  },
+  {
+    _id: false,
+  },
+);
 
 const courseSchema = new Schema<TCourse>(
   {
@@ -31,9 +41,10 @@ const courseSchema = new Schema<TCourse>(
     language: { type: String, required: true },
     provider: { type: String, required: true },
     details: { type: courseDetailSchema, required: true },
-    isDeleted: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false, select: false },
   },
   {
+    id: false,
     toJSON: {
       virtuals: true,
     },
@@ -50,7 +61,7 @@ courseSchema.virtual('durationInWeeks').get(function () {
 });
 
 courseSchema.pre(/^find/, function (this: Query<TCourse, Document>, next) {
-  this.find({ isDeleted: { $ne: true } }).select('-tags._id');
+  this.find({ isDeleted: { $ne: true } });
   next();
 });
 

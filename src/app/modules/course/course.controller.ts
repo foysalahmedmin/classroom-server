@@ -47,9 +47,21 @@ const getBesCourse = catchAsync(async (req, res) => {
   );
 });
 
+const getUpdateCourse = catchAsync(async (req, res) => {
+  const { _id } = req.params;
+  const payload = req.body;
+  const result = await CourseServices.getUpdateCourseIntoDB(_id, payload);
+
+  sendResponse(
+    res,
+    new AppResponse(true, 200, 'Course updated successfully', result),
+  );
+});
+
 export const CourseControllers = {
   createCourse,
   getAllCourse,
   getSingleCourseWithReviews,
   getBesCourse,
+  getUpdateCourse,
 };

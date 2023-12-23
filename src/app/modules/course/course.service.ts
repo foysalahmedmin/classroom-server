@@ -5,6 +5,7 @@ import courseQueryModifier from '../../utils/queryModifier';
 import CourseReview from '../course-review/course-review.model';
 import { TCourse } from './course.interface';
 import Course from './course.model';
+import { courseUpdateDataModifier } from './course.utils';
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
@@ -114,9 +115,76 @@ const getBestCourseFromDB = async () => {
   return bestCourseData[0];
 };
 
+const getUpdateCourseIntoDB = async (
+  _id: string,
+  payload: Partial<TCourse>,
+) => {
+  const { tags, ...restData } = payload;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    if (tags && tags.length > 0) {
+      const deletedTags = tags
+        .filter((el) => el.name && el.isDeleted === true)
+        .map((el) => el.name);
+      const newTags = tags.filter((el) => el.name && el.isDeleted !== true);
+
+      if (deletedTags.length > 0) {
+        await Course.findByIdAndUpdate(
+          _id,
+          {
+            $pull: { tags: { name: { $in: deletedTags } } },
+          },
+          { new: true, runValidators: true, session },
+        );
+      }
+
+      if (newTags.length > 0) {
+        await Course.findByIdAndUpdate(
+          _id,
+          {
+            $addToSet: { tags: { $each: newTags } },
+          },
+          { new: true, runValidators: true, session },
+        );
+      }
+    }
+
+    const modifiedUpdateData = await courseUpdateDataModifier(restData);
+
+    const result = await Course.findByIdAndUpdate(_id, modifiedUpdateData, {
+      new: true,
+      session,
+    });
+
+    session.commitTransaction();
+
+    return result;
+  } catch (err) {
+    session.abortTransaction();
+  } finally {
+    session.endSession();
+  }
+};
+
+// const getUpdateCourseIntoDB = async (
+//   _id: string,
+//   payload: Partial<TCourse>,
+// ) => {
+//   const modifiedUpdateData = await courseUpdateDataModifier(payload);
+
+//   const result = await Course.findByIdAndUpdate(_id, modifiedUpdateData, {
+//     new: true,
+//   });
+
+//   return result;
+// };
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCourseFromDB,
   getSingleCourseWithReviewsFromDB,
   getBestCourseFromDB,
+  getUpdateCourseIntoDB,
 };

@@ -19,4 +19,10 @@ router.get(
 
 router.get('/courses/best', CourseControllers.getBesCourse);
 
+router.put(
+  '/courses/:_id',
+  validateRequest(CourseValidations.updateCourseValidationSchema),
+  CourseControllers.getUpdateCourse,
+);
+
 export const CourseRoute = router;
