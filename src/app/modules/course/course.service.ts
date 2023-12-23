@@ -26,7 +26,7 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   const meta = {
     page,
     limit,
-    totalCourses,
+    total: totalCourses,
   };
 
   return {
@@ -100,7 +100,7 @@ const getBestCourseFromDB = async () => {
           startDate: '$startDate',
           endDate: '$endDate',
           durationInWeeks: '$durationInWeeks',
-          details: 'details',
+          details: '$details',
         },
         averageRating: 1,
         reviewCount: 1,
@@ -155,6 +155,7 @@ const getUpdateCourseIntoDB = async (
 
     const result = await Course.findByIdAndUpdate(_id, modifiedUpdateData, {
       new: true,
+      runValidators: true,
       session,
     });
 
