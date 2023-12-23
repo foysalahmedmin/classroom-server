@@ -31,7 +31,22 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
   return result;
 };
 
+const getSingleCourseWithReviewsFromDB = async (
+  query: Record<string, unknown>,
+) => {
+  const { filterModifiedQuery, sortModifiedQuery } = courseQueryModifier(query);
+  const page = Number(query.page) || 1;
+  const limit = Number(query.limit);
+  const skip = (page - 1) * limit;
+  const result = await Course.find(filterModifiedQuery)
+    .sort(sortModifiedQuery)
+    .skip(skip)
+    .limit(limit);
+  return result;
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCourseFromDB,
+  getSingleCourseWithReviewsFromDB,
 };

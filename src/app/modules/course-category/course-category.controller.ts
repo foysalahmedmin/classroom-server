@@ -15,7 +15,6 @@ const createCourseCategory = catchAsync(async (req, res) => {
 });
 
 const getAllCourseCategory = catchAsync(async (req, res) => {
-  const payload = req.body;
   const result = await CourseCategoryServices.getAllCourseCategoryFromDB();
 
   sendResponse(

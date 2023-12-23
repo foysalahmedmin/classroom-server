@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Query, Schema } from 'mongoose';
 import { TCourse, TCourseDetail, TCourseTags } from './course.interface';
 
 const courseTagsSchema = new Schema<TCourseTags>({
@@ -47,6 +47,17 @@ courseSchema.virtual('durationInWeeks').get(function () {
     Math.abs(durationInMillisecond) / (1000 * 60 * 60 * 24 * 7),
   );
   return durationInWeeks;
+});
+
+courseSchema.pre(/^find/, function (this: Query<TCourse, Document>, next) {
+  this.find({ isDeleted: { $ne: true } }).select('-tags._id');
+  next();
+});
+
+courseSchema.pre('aggregate', function () {
+  this.pipeline().unshift({
+    $match: { isDeleted: { $ne: true } },
+  });
 });
 
 const Course = mongoose.model<TCourse>('Course', courseSchema);
