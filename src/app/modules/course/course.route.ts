@@ -17,7 +17,7 @@ router.get(
   CourseControllers.getSingleCourseWithReviews,
 );
 
-router.get('/courses/best', CourseControllers.getBesCourse);
+router.get('/course/best', CourseControllers.getBesCourse);
 
 router.put(
   '/courses/:_id',
