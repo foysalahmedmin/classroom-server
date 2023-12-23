@@ -23,7 +23,7 @@ const getAllCourse = catchAsync(async (req, res) => {
   );
 });
 
-const getAllCourseWithReviews = catchAsync(async (req, res) => {
+const getSingleCourseWithReviews = catchAsync(async (req, res) => {
   const { _id } = req.params;
   const result = await CourseServices.getSingleCourseWithReviewsFromDB(_id);
 
@@ -32,14 +32,24 @@ const getAllCourseWithReviews = catchAsync(async (req, res) => {
     new AppResponse(
       true,
       200,
-      'Courses retrieved with reviews successfully',
+      'Course and Reviews retrieved successfully',
       result,
     ),
+  );
+});
+
+const getBesCourse = catchAsync(async (req, res) => {
+  const result = await CourseServices.getBestCourseFromDB();
+
+  sendResponse(
+    res,
+    new AppResponse(true, 200, 'Best course retrieved successfully', result),
   );
 });
 
 export const CourseControllers = {
   createCourse,
   getAllCourse,
-  getAllCourseWithReviews,
+  getSingleCourseWithReviews,
+  getBesCourse,
 };

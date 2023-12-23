@@ -35,7 +35,6 @@ const getAllCourseFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSingleCourseWithReviewsFromDB = async (_id: string) => {
-  console.log(_id);
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
@@ -56,8 +55,68 @@ const getSingleCourseWithReviewsFromDB = async (_id: string) => {
   }
 };
 
+const getBestCourseFromDB = async () => {
+  const bestCourseData = await Course.aggregate([
+    {
+      $lookup: {
+        from: 'course-reviews',
+        localField: '_id',
+        foreignField: 'courseId',
+        as: 'reviews',
+      },
+    },
+    {
+      $match: {
+        reviews: { $exists: true, $not: { $size: 0 } },
+      },
+    },
+    {
+      $addFields: {
+        averageRating: { $avg: '$reviews.rating' },
+        reviewCount: { $size: '$reviews' },
+      },
+    },
+    {
+      $sort: {
+        averageRating: -1,
+      },
+    },
+    {
+      $limit: 1,
+    },
+    {
+      $project: {
+        _id: 0,
+        course: {
+          _id: '$_id',
+          title: '$title',
+          instructor: '$instructor',
+          categoryId: '$categoryId',
+          price: '$price',
+          tags: '$tags',
+          language: '$language',
+          provider: '$provider',
+          startDate: '$startDate',
+          endDate: '$endDate',
+          durationInWeeks: '$durationInWeeks',
+          details: 'details',
+        },
+        averageRating: 1,
+        reviewCount: 1,
+      },
+    },
+  ]);
+
+  if (!bestCourseData.length) {
+    throw new AppError(404, 'not found');
+  }
+
+  return bestCourseData[0];
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   getAllCourseFromDB,
   getSingleCourseWithReviewsFromDB,
+  getBestCourseFromDB,
 };

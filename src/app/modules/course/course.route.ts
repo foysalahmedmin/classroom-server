@@ -12,6 +12,11 @@ router.post(
 );
 
 router.get('/courses', CourseControllers.getAllCourse);
-router.get('/courses/:_id/reviews', CourseControllers.getAllCourseWithReviews);
+router.get(
+  '/courses/:_id/reviews',
+  CourseControllers.getSingleCourseWithReviews,
+);
+
+router.get('/courses/best', CourseControllers.getBesCourse);
 
 export const CourseRoute = router;
