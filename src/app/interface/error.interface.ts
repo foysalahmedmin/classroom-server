@@ -2,7 +2,7 @@ export type TGenericErrorResponse = {
   statusCode: number;
   message: string;
   errorMessage: string;
-  errorDetails: Record<string, unknown>;
+  errorDetails: any;
 };
 
 export type TErrorResponse = {
@@ -10,6 +10,6 @@ export type TErrorResponse = {
   statusCode: number;
   message: string;
   errorMessage: string;
-  errorDetails: Record<string, unknown>;
+  errorDetails: any;
   stack?: string | null | undefined;
 };

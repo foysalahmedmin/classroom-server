@@ -4,7 +4,7 @@ import { TCourse, TCourseDetail, TCourseTags } from './course.interface';
 const courseTagsSchema = new Schema<TCourseTags>(
   {
     name: { type: String, required: true },
-    isDeleted: { type: Boolean },
+    isDeleted: { type: Boolean, default: false },
   },
   {
     _id: false,
