@@ -10,6 +10,7 @@ const courseQueryModifier = (query: Record<string, unknown>) => {
     startDate,
     endDate,
     level,
+    durationInWeeks,
     ...restFilterQueries
   } = restQueries;
 
@@ -35,10 +36,16 @@ const courseQueryModifier = (query: Record<string, unknown>) => {
     };
   }
   if (startDate) {
-    filterModifiedQuery.price = { $gte: new Date(startDate as string) };
+    filterModifiedQuery.startDate = { $gte: new Date(startDate as string) };
   }
   if (endDate) {
-    filterModifiedQuery.price = { $lte: new Date(endDate as string) };
+    filterModifiedQuery.endDate = { $lte: new Date(endDate as string) };
+  }
+  if (durationInWeeks && !isNaN(Number(durationInWeeks as string))) {
+    filterModifiedQuery.durationInWeeks = Number(durationInWeeks as string);
+  }
+  if (durationInWeeks && !isNaN(Number(durationInWeeks))) {
+    filterModifiedQuery.durationInWeeks = Number(durationInWeeks);
   }
 
   //   Making sort queries ;

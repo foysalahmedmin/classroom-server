@@ -124,10 +124,13 @@ export class AppQueryCourse<T> {
       };
     }
     if (this.query.startDate) {
-      queryObj.price = { $gte: new Date(this.query.startDate as string) };
+      queryObj.startDate = { $gte: new Date(this.query.startDate as string) };
     }
     if (this.query.endDate) {
-      queryObj.price = { $lte: new Date(this.query.endDate as string) };
+      queryObj.endDate = { $lte: new Date(this.query.endDate as string) };
+    }
+    if (!isNaN(Number(this.query.durationInWeeks as string))) {
+      queryObj.durationInWeeks = Number(this.query.durationInWeeks as string);
     }
 
     this.queryModel = this.queryModel.find(queryObj as FilterQuery<T>);
