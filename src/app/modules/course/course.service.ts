@@ -1,37 +1,144 @@
-import mongoose from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import AppError from '../../builder/errors/AppError';
-import courseQueryModifier from '../../utils/queryModifier';
+import { TCourseQuery } from '../../interface/query.interface';
+import { courseUpdateDataModifier } from '../../utils/updateDataModifier';
 import CourseReview from '../course-review/course-review.model';
+import { courseSortableFields } from './course.constant';
 import { TCourse } from './course.interface';
 import Course from './course.model';
-import { courseUpdateDataModifier } from './course.utils';
+import { courseModifiedSortField } from './course.utils';
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
   return result;
 };
 
-const getAllCourseFromDB = async (query: Record<string, unknown>) => {
-  const { filterModifiedQuery, sortModifiedQuery } = courseQueryModifier(query);
-  const page = Number(query.page) || 1;
-  const limit = Number(query.limit) || 10;
-  const skip = (page - 1) * limit;
-  const result = await Course.find(filterModifiedQuery)
-    .sort(sortModifiedQuery)
-    .skip(skip)
-    .limit(limit);
-
-  const totalCourses = await Course.countDocuments(filterModifiedQuery);
-
-  const meta = {
+const getAllCourseFromDB = async (query: TCourseQuery) => {
+  const {
     page,
     limit,
-    total: totalCourses,
+    sortBy,
+    sortOrder,
+    tags,
+    level,
+    minPrice,
+    maxPrice,
+    startDate,
+    endDate,
+    durationInWeeks,
+    ...restFilterQueries
+  } = query;
+  const pageNumber = Number(query.page) || 1;
+  const limitNumber = Number(query.limit) || 10;
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const createSortStage = (sortBy: string, sortOrder: SortOrder): any => {
+    const sortField: { [key: string]: SortOrder } = {};
+    sortBy.split(',').forEach((el: string) => {
+      if (courseSortableFields.includes(el)) {
+        sortField[el] = sortOrder === 'asc' ? 1 : -1;
+      }
+    });
+
+    return {
+      $sort: sortField,
+    };
   };
+
+  const result = await Course.aggregate([
+    {
+      $match: {
+        ...(tags
+          ? { tags: { $eleMatch: { name: tags, isDeleted: false } } }
+          : {}),
+        ...(level ? { 'details.level': level } : {}),
+        ...(minPrice ? { price: { $gte: Number(minPrice) } } : {}),
+        ...(maxPrice ? { price: { $lte: Number(maxPrice) } } : {}),
+        ...(startDate ? { startDate: { $gte: new Date(startDate) } } : {}),
+        ...(endDate ? { endDate: { $lte: new Date(endDate) } } : {}),
+        ...restFilterQueries,
+      },
+    },
+    {
+      $addFields: {
+        durationInWeeks: {
+          $ceil: {
+            $divide: [
+              { $subtract: ['$endDate', '$startDate'] },
+              1000 * 60 * 60 * 24 * 7,
+            ],
+          },
+        },
+      },
+    },
+    {
+      $match: {
+        ...(durationInWeeks
+          ? { durationInWeeks: Number(durationInWeeks) }
+          : {}),
+      },
+    },
+    {
+      $sort: {
+        ...(sortBy && sortOrder
+          ? courseModifiedSortField(sortBy, sortOrder)
+          : {
+              startDate: -1,
+            }),
+      },
+    },
+    {
+      $facet: {
+        meta: [
+          { $count: 'total' },
+          { $addFields: { page: Number(pageNumber) } },
+          { $addFields: { skip: Number(skip) } },
+        ],
+        data: [
+          {
+            $skip: skip,
+          },
+          {
+            $limit: limitNumber,
+          },
+          {
+            $project: {
+              title: 1,
+              instructor: 1,
+              categoryId: 1,
+              price: 1,
+              tags: 1,
+              language: 1,
+              provider: 1,
+              startDate: 1,
+              endDate: 1,
+              durationInWeeks: 1,
+              details: 1,
+            },
+          },
+        ],
+      },
+    },
+    // {
+    //   $unwind: {
+    //     path: '$meta',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    // {
+    //   $project: {
+    //     total: '$meta.total',
+    //     page: '$metadata.page',
+    //     data: '$data',
+    //   },
+    // },
+  ]);
+
+  const { meta, data } = result[0];
 
   return {
     meta,
-    result,
+    result: data,
   };
 };
 
@@ -57,7 +164,7 @@ const getSingleCourseWithReviewsFromDB = async (_id: string) => {
 };
 
 const getBestCourseFromDB = async () => {
-  const bestCourseData = await Course.aggregate([
+  const [result] = await Course.aggregate([
     {
       $lookup: {
         from: 'course-reviews',
@@ -107,18 +214,13 @@ const getBestCourseFromDB = async () => {
       },
     },
   ]);
-
-  if (!bestCourseData.length) {
+  if (!result) {
     throw new AppError(404, 'not found');
   }
-
-  return bestCourseData[0];
+  return result;
 };
 
-const getUpdateCourseIntoDB = async (
-  _id: string,
-  payload: Partial<TCourse>,
-) => {
+const updateCourseIntoDB = async (_id: string, payload: Partial<TCourse>) => {
   const { tags, ...restData } = payload;
   const session = await mongoose.startSession();
   try {
@@ -174,5 +276,5 @@ export const CourseServices = {
   getAllCourseFromDB,
   getSingleCourseWithReviewsFromDB,
   getBestCourseFromDB,
-  getUpdateCourseIntoDB,
+  updateCourseIntoDB,
 };

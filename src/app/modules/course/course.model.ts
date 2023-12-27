@@ -45,6 +45,7 @@ const courseSchema = new Schema<TCourse>(
   },
   {
     id: false,
+    timestamps: true,
     toJSON: {
       virtuals: true,
     },

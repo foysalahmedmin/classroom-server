@@ -1,7 +1,8 @@
 import { SortOrder } from 'mongoose';
+import { TCourseQuery } from '../interface/query.interface';
 import { courseSortableFields } from '../modules/course/course.constant';
 
-const courseQueryModifier = (query: Record<string, unknown>) => {
+export const courseGetQueryModifier = (query: TCourseQuery) => {
   const { page, limit, sortBy, sortOrder, ...restQueries } = query;
   const {
     minPrice,
@@ -26,30 +27,30 @@ const courseQueryModifier = (query: Record<string, unknown>) => {
   if (level) {
     filterModifiedQuery['details.level'] = level;
   }
-  if (!isNaN(Number(minPrice as string))) {
-    filterModifiedQuery.price = { $gte: Number(minPrice as string) };
+  if (!isNaN(Number(minPrice))) {
+    filterModifiedQuery.price = { $gte: Number(minPrice) };
   }
-  if (!isNaN(Number(maxPrice as string))) {
+  if (!isNaN(Number(maxPrice))) {
     filterModifiedQuery.price = {
       ...filterModifiedQuery.price,
-      $lte: Number(maxPrice as string),
+      $lte: Number(maxPrice),
     };
   }
   if (startDate) {
-    filterModifiedQuery.startDate = { $gte: new Date(startDate as string) };
+    filterModifiedQuery.startDate = { $gte: new Date(startDate) };
   }
   if (endDate) {
-    filterModifiedQuery.endDate = { $lte: new Date(endDate as string) };
+    filterModifiedQuery.endDate = { $lte: new Date(endDate) };
   }
-  if (durationInWeeks && !isNaN(Number(durationInWeeks as string))) {
-    filterModifiedQuery.durationInWeeks = Number(durationInWeeks as string);
+  if (durationInWeeks && !isNaN(Number(durationInWeeks))) {
+    filterModifiedQuery.durationInWeeks = Number(durationInWeeks);
   }
   if (durationInWeeks && !isNaN(Number(durationInWeeks))) {
     filterModifiedQuery.durationInWeeks = Number(durationInWeeks);
   }
 
   //   Making sort queries ;
-  const sortByArr = (sortBy as string)?.split(',');
+  const sortByArr = sortBy?.split(',');
   if (sortByArr) {
     sortByArr.forEach((el: string) => {
       if (courseSortableFields.includes(el)) {
@@ -63,5 +64,3 @@ const courseQueryModifier = (query: Record<string, unknown>) => {
     sortModifiedQuery,
   };
 };
-
-export default courseQueryModifier;
