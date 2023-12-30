@@ -15,13 +15,18 @@ const userValidationSchema = z.object({
     password: z
       .string({
         invalid_type_error:
-          'Password must be sting, strong and minimum 6 character',
+          'Password must be a sting, strong, and at least 6 characters long',
         required_error: 'Password is required',
       })
-      .min(6, { message: 'Password length must be minimum 6' })
-      .refine((value) => /^A-Z/.test(value), {
-        message: 'Must be use !,@,#,$,%,^,& or * in password',
-      }),
+      .min(6, { message: 'Password length must be at least 6 characters' })
+      .refine(
+        (value) =>
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/.test(value),
+        {
+          message:
+            'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,*)',
+        },
+      ),
     role: z.enum(['user', 'admin'], {
       invalid_type_error: 'Role must be user or admin',
       required_error: 'Role is required',

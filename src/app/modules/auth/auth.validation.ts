@@ -9,10 +9,10 @@ const loginValidationSchema = z.object({
     password: z
       .string({
         invalid_type_error:
-          'Password must be sting, strong and minimum 6 character',
+          'Password must be a sting, strong, and at least 6 characters long',
         required_error: 'Password is required',
       })
-      .min(6, { message: 'Password length must be minimum 6' }),
+      .min(6, { message: 'Password length must be at least 6 characters' }),
   }),
 });
 
@@ -22,23 +22,37 @@ const updatePasswordValidationSchema = z.object({
       currentPassword: z
         .string({
           invalid_type_error:
-            'Current Password must be sting, strong and minimum 6 character',
+            'Current Password must be a sting, strong, and at least 6 characters long',
           required_error: 'Current Password is required',
         })
-        .min(6, { message: 'Current Password length must be minimum 6' })
-        .refine((value) => /^A-Z/.test(value), {
-          message: 'Must be use !,@,#,$,%,^,& or * in current password',
-        }),
+        .min(6, {
+          message: 'Current Password length must be at least 6 characters',
+        })
+        .refine(
+          (value) =>
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/.test(value),
+          {
+            message:
+              'Current password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,*)',
+          },
+        ),
       newPassword: z
         .string({
           invalid_type_error:
-            'New password must be sting, strong and minimum 6 character',
+            'New password must be a sting, strong, and at least 6 characters long',
           required_error: 'New Password is required',
         })
-        .min(6, { message: 'New Password length must be minimum 6' })
-        .refine((value) => /^A-Z/.test(value), {
-          message: 'Must be use !,@,#,$,%,^,& or * in new password',
-        }),
+        .min(6, {
+          message: 'New Password length must be at least 6 characters',
+        })
+        .refine(
+          (value) =>
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/.test(value),
+          {
+            message:
+              'New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,*)',
+          },
+        ),
     })
     .refine((value) => value.currentPassword !== value.newPassword, {
       message: 'New password must be unique',
