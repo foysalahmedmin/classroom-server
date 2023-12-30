@@ -30,10 +30,10 @@ const updatePasswordValidationSchema = z.object({
         })
         .refine(
           (value) =>
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/.test(value),
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*])/.test(value),
           {
             message:
-              'Current password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,*)',
+              'Current password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,?,*)',
           },
         ),
       newPassword: z
@@ -47,10 +47,10 @@ const updatePasswordValidationSchema = z.object({
         })
         .refine(
           (value) =>
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/.test(value),
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*])/.test(value),
           {
             message:
-              'New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,*)',
+              'New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,?,*)',
           },
         ),
     })
