@@ -9,7 +9,7 @@ const createCourseCategoryIntoDB = async (payload: TCourseCategory) => {
 const getAllCourseCategoryFromDB = async () => {
   const result = await CourseCategory.find().populate({
     path: 'createdBy',
-    select: '-password',
+    select: '-password -createdAt -updatedAt -__v',
   });
   return result;
 };

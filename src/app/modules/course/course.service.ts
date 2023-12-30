@@ -138,19 +138,6 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
         ],
       },
     },
-    // {
-    //   $unwind: {
-    //     path: '$meta',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
-    // {
-    //   $project: {
-    //     total: '$meta.total',
-    //     page: '$metadata.page',
-    //     data: '$data',
-    //   },
-    // },
   ]);
 
   const { meta, courses } = result[0];
@@ -167,7 +154,7 @@ const getSingleCourseWithReviewsFromDB = async (_id: string) => {
     session.startTransaction();
     const course = await Course.findById({ _id: _id }).populate({
       path: 'createdBy',
-      select: '-password',
+      select: '-password -createdAt -updatedAt -__v',
     });
 
     if (!course) {
@@ -175,7 +162,7 @@ const getSingleCourseWithReviewsFromDB = async (_id: string) => {
     }
     const reviews = await CourseReview.find({ courseId: course._id }).populate({
       path: 'createdBy',
-      select: '-password',
+      select: '-password -createdAt -updatedAt -__v',
     });
     session.commitTransaction();
 
@@ -221,6 +208,36 @@ const getBestCourseFromDB = async () => {
       $limit: 1,
     },
     {
+      $lookup: {
+        from: 'users',
+        let: {
+          createdBy: '$createdBy',
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$_id', { $toObjectId: '$$createdBy' }] },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              username: 1,
+              email: 1,
+              role: 1,
+            },
+          },
+        ],
+        as: 'createdBy',
+      },
+    },
+    {
+      $unwind: {
+        path: '$createdBy',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
       $project: {
         _id: 0,
         course: {
@@ -236,6 +253,9 @@ const getBestCourseFromDB = async () => {
           endDate: '$endDate',
           durationInWeeks: '$durationInWeeks',
           details: '$details',
+          createdBy: '$createdBy',
+          createdAt: '$createdAt',
+          updatedAt: '$updatedAt',
         },
         averageRating: 1,
         reviewCount: 1,
