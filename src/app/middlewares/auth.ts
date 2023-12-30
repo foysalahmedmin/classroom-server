@@ -12,7 +12,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
     const token = req.headers.authorization;
 
     if (!token) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        'You do not have the necessary permissions to access this resource.',
+      );
     }
 
     const decoded = jwt.verify(
@@ -34,11 +37,17 @@ const auth = (...requiredRoles: TUserRole[]) => {
         iat as number,
       )
     ) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        'You do not have the necessary permissions to access this resource.',
+      );
     }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        'You do not have the necessary permissions to access this resource.',
+      );
     }
     req.user = decoded as JwtPayload;
     next();

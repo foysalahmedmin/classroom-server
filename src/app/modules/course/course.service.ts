@@ -90,6 +90,36 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
             $limit: limitNumber,
           },
           {
+            $lookup: {
+              from: 'users',
+              let: {
+                createdBy: '$createdBy',
+              },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$_id', { $toObjectId: '$$createdBy' }] },
+                  },
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    username: 1,
+                    email: 1,
+                    role: 1,
+                  },
+                },
+              ],
+              as: 'createdBy',
+            },
+          },
+          {
+            $unwind: {
+              path: '$createdBy',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
             $project: {
               title: 1,
               instructor: 1,
@@ -102,6 +132,7 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
               endDate: 1,
               durationInWeeks: 1,
               details: 1,
+              createdBy: 1,
             },
           },
         ],

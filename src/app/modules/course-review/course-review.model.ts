@@ -1,24 +1,29 @@
 import mongoose, { Schema } from 'mongoose';
 import { TCourseReview } from './course-review.interface';
 
-const courseReviewSchema = new Schema<TCourseReview>({
-  courseId: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'Course',
+const courseReviewSchema = new Schema<TCourseReview>(
+  {
+    courseId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Course',
+    },
+    rating: {
+      type: Number,
+      max: 5,
+      required: true,
+    },
+    review: {
+      type: String,
+      required: true,
+    },
+    createdBy: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    isDeleted: { type: Boolean, default: false, select: false },
   },
-  rating: {
-    type: Number,
-    max: 5,
-    required: true,
+  {
+    timestamps: true,
   },
-  review: {
-    type: String,
-    required: true,
-  },
-  createdBy: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  isDeleted: { type: Boolean, default: false, select: false },
-});
+);
 
 const CourseReview = mongoose.model<TCourseReview>(
   'Course-Review',

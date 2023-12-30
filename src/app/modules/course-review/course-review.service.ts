@@ -2,7 +2,11 @@ import { TCourseReview } from './course-review.interface';
 import CourseReview from './course-review.model';
 
 const createCourseReviewIntoDB = async (payload: TCourseReview) => {
-  const result = await CourseReview.create(payload);
+  const createdResult = await CourseReview.create(payload);
+  const result = await CourseReview.findById(createdResult._id).populate({
+    path: 'createdBy',
+    select: '-password',
+  });
   return result;
 };
 
