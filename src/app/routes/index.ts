@@ -1,4 +1,5 @@
 import express from 'express';
+import { AuthRoute } from '../modules/auth/auth.route';
 import { CourseCategoryRoute } from '../modules/course-category/course-category.route';
 import { CourseReviewRoute } from '../modules/course-review/course-review.route';
 import { CourseRoute } from '../modules/course/course.route';
@@ -17,6 +18,10 @@ const moduleRoutes = [
   {
     path: '/reviews',
     route: CourseReviewRoute,
+  },
+  {
+    path: '/auth',
+    route: AuthRoute,
   },
 ];
 

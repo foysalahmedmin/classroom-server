@@ -1,12 +1,13 @@
-import mongoose, { SortOrder } from 'mongoose';
+import mongoose from 'mongoose';
 import AppError from '../../builder/errors/AppError';
 import { TCourseQuery } from '../../interface/query.interface';
-import { courseUpdateDataModifier } from '../../utils/updateDataModifier';
 import CourseReview from '../course-review/course-review.model';
-import { courseSortableFields } from './course.constant';
 import { TCourse } from './course.interface';
 import Course from './course.model';
-import { courseModifiedSortField } from './course.utils';
+import {
+  courseModifiedSortField,
+  courseUpdateDataModifier,
+} from './course.utils';
 
 const createCourseIntoDB = async (payload: TCourse) => {
   const result = await Course.create(payload);
@@ -31,19 +32,6 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
   const pageNumber = Number(query.page) || 1;
   const limitNumber = Number(query.limit) || 10;
   const skip = (pageNumber - 1) * limitNumber;
-
-  const createSortStage = (sortBy: string, sortOrder: SortOrder): any => {
-    const sortField: { [key: string]: SortOrder } = {};
-    sortBy.split(',').forEach((el: string) => {
-      if (courseSortableFields.includes(el)) {
-        sortField[el] = sortOrder === 'asc' ? 1 : -1;
-      }
-    });
-
-    return {
-      $sort: sortField,
-    };
-  };
 
   const result = await Course.aggregate([
     {
@@ -94,7 +82,7 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
           { $addFields: { page: Number(pageNumber) } },
           { $addFields: { skip: Number(skip) } },
         ],
-        data: [
+        courses: [
           {
             $skip: skip,
           },
@@ -134,11 +122,11 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
     // },
   ]);
 
-  const { meta, data } = result[0];
+  const { meta, courses } = result[0];
 
   return {
     meta,
-    result: data,
+    result: { courses },
   };
 };
 

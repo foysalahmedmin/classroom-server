@@ -41,6 +41,7 @@ const courseSchema = new Schema<TCourse>(
     language: { type: String, required: true },
     provider: { type: String, required: true },
     details: { type: courseDetailSchema, required: true },
+    createdBy: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
     isDeleted: { type: Boolean, default: false, select: false },
   },
   {

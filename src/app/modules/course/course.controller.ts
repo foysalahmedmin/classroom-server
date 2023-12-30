@@ -18,8 +18,8 @@ const getAllCourse = catchAsync(async (req, res) => {
   const { meta, result } = await CourseServices.getAllCourseFromDB(query);
 
   sendResponse(res, {
-    ...new AppResponse(true, 200, 'Courses retrieved successfully', result),
     meta,
+    ...new AppResponse(true, 200, 'Courses retrieved successfully', result),
   });
 });
 
