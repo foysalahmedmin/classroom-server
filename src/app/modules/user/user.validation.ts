@@ -21,10 +21,10 @@ const userValidationSchema = z.object({
       .min(6, { message: 'Password length must be at least 6 characters' })
       .refine(
         (value) =>
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&?*])/.test(value),
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s])/.test(value),
         {
           message:
-            'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character (!,@,#,$,%,^,&,?,*)',
+            'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character.',
         },
       ),
     role: z.enum(['user', 'admin'], {

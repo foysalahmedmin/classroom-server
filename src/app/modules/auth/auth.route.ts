@@ -23,8 +23,8 @@ router.post(
 router.post(
   '/change-password',
   auth('user', 'admin'),
-  validateRequest(AuthValidations.loginValidationSchema),
-  AuthController.loginUser,
+  validateRequest(AuthValidations.updatePasswordValidationSchema),
+  AuthController.updatePassword,
 );
 
 export const AuthRoute = router;
