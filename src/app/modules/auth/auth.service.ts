@@ -18,6 +18,7 @@ const loginUser = async (payload: TLogin) => {
 
   const jwtPayload = {
     _id: user._id,
+    username: user.username,
     role: user.role,
     email: user.email,
   };
@@ -37,5 +38,10 @@ const loginUser = async (payload: TLogin) => {
   return {
     accessToken,
     refreshToken,
+    jwtPayload,
   };
+};
+
+export const AuthServices = {
+  loginUser,
 };

@@ -44,3 +44,8 @@ const updatePasswordValidationSchema = z.object({
       message: 'New password must be unique',
     }),
 });
+
+export const AuthValidations = {
+  loginValidationSchema,
+  updatePasswordValidationSchema,
+};
