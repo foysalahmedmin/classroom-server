@@ -71,7 +71,7 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
         ...(sortBy && sortOrder
           ? courseModifiedSortField(sortBy, sortOrder)
           : {
-              startDate: -1,
+              createdAt: -1,
             }),
       },
     },
