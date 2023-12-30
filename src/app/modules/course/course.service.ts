@@ -133,6 +133,8 @@ const getAllCourseFromDB = async (query: TCourseQuery) => {
               durationInWeeks: 1,
               details: 1,
               createdBy: 1,
+              createdAt: 1,
+              updatedAt: 1,
             },
           },
         ],

@@ -66,14 +66,12 @@ userSchema.statics.isPasswordMatchedWithOldPasswords = async function (
   password: string,
   hashedOldPasswords: string[],
 ) {
-  let isPasswordMatched = false;
   for (let i = 0; i < hashedOldPasswords.length; i++) {
     if (await bcrypt.compare(password, hashedOldPasswords[i])) {
-      isPasswordMatched = true;
-      break;
+      return true;
     }
   }
-  return isPasswordMatched;
+  return false;
 };
 
 userSchema.statics.isJWTIssuedBeforeChangedPassword = async function (

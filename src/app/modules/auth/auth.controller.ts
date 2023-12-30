@@ -22,4 +22,16 @@ const loginUser = catchAsync(async (req, res) => {
   );
 });
 
-export const AuthController = { loginUser };
+const updatePassword = catchAsync(async (req, res) => {
+  const result = await AuthServices.updatePassword(req.user, req.body);
+
+  sendResponse(
+    res,
+    new AppResponse(true, 200, 'Password changed successfully', result),
+  );
+});
+
+export const AuthController = {
+  loginUser,
+  updatePassword,
+};
