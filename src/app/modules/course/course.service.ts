@@ -165,18 +165,27 @@ const getSingleCourseWithReviewsFromDB = async (_id: string) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const course = await Course.findById({ _id: _id });
+    const course = await Course.findById({ _id: _id }).populate({
+      path: 'createdBy',
+      select: '-password',
+    });
 
     if (!course) {
       throw new AppError(404, 'Course not found');
     }
-    const reviews = await CourseReview.find({ courseId: course._id });
+    const reviews = await CourseReview.find({ courseId: course._id }).populate({
+      path: 'createdBy',
+      select: '-password',
+    });
     session.commitTransaction();
 
     return { course, reviews: reviews || [] };
-  } catch (err) {
+  } catch (err: any) {
     session.abortTransaction();
-    throw new AppError(500, 'Failed to get course with');
+    throw new AppError(
+      500,
+      `Failed to get course with reviews: (${err.message})`,
+    );
   } finally {
     session.endSession();
   }
