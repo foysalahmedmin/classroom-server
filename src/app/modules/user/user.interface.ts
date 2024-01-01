@@ -22,5 +22,5 @@ export interface TUserModel extends Model<TUser> {
   isJWTIssuedBeforeChangedPassword(
     passwordChangedTimestamp: Date,
     JWTIssuedTimestamp: number,
-  ): boolean;
+  ): Promise<boolean>;
 }

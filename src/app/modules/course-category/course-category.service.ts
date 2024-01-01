@@ -1,7 +1,12 @@
+import { JwtPayload } from 'jsonwebtoken';
 import { TCourseCategory } from './course-category.interface';
 import CourseCategory from './course-category.model';
 
-const createCourseCategoryIntoDB = async (payload: TCourseCategory) => {
+const createCourseCategoryIntoDB = async (
+  user: JwtPayload,
+  payload: TCourseCategory,
+) => {
+  payload.createdBy = user._id;
   const result = await CourseCategory.create(payload);
   return result;
 };

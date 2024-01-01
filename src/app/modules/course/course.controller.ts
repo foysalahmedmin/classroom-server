@@ -4,8 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { CourseServices } from './course.service';
 
 const createCourse = catchAsync(async (req, res) => {
-  const payload = req.body;
-  const result = await CourseServices.createCourseIntoDB(payload);
+  const result = await CourseServices.createCourseIntoDB(req.user, req.body);
 
   sendResponse(
     res,

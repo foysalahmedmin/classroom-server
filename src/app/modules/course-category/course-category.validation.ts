@@ -6,10 +6,6 @@ const courseCategoryValidationSchema = z.object({
       invalid_type_error: 'Name must be string',
       required_error: 'Name is required',
     }),
-    createdBy: z.string({
-      invalid_type_error: 'CreatedBy must be string',
-      required_error: 'CreatedBy is required',
-    }),
   }),
 });
 
@@ -21,11 +17,6 @@ const updateCourseCategoryValidationSchema = z.object({
       })
       .optional(),
   }),
-  createdBy: z
-    .string({
-      invalid_type_error: 'CreatedBy must be string',
-    })
-    .optional(),
 });
 
 export const CourseCategoryValidations = {

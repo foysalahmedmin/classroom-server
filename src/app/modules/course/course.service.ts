@@ -1,3 +1,4 @@
+import { JwtPayload } from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import AppError from '../../builder/errors/AppError';
 import { TCourseQuery } from '../../interface/query.interface';
@@ -9,7 +10,8 @@ import {
   courseUpdateDataModifier,
 } from './course.utils';
 
-const createCourseIntoDB = async (payload: TCourse) => {
+const createCourseIntoDB = async (user: JwtPayload, payload: TCourse) => {
+  payload.createdBy = user._id;
   const result = await Course.create(payload);
   return result;
 };

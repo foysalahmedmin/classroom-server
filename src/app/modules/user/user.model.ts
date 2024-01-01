@@ -79,7 +79,7 @@ userSchema.statics.isJWTIssuedBeforeChangedPassword = async function (
   JWTIssuedTimestamp: number,
 ) {
   const passwordChangedTime =
-    new Date(passwordChangedTimestamp).getTime() / 100;
+    new Date(passwordChangedTimestamp).getTime() / 1000;
   return passwordChangedTime > JWTIssuedTimestamp;
 };
 

@@ -2,6 +2,6 @@ import { Types } from 'mongoose';
 
 export interface TCourseCategory {
   name: string;
-  createdBy: Types.ObjectId;
+  createdBy?: Types.ObjectId;
   isDeleted?: boolean;
 }

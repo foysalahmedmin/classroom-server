@@ -4,9 +4,10 @@ import sendResponse from '../../utils/sendResponse';
 import { CourseCategoryServices } from './course-category.service';
 
 const createCourseCategory = catchAsync(async (req, res) => {
-  const payload = req.body;
-  const result =
-    await CourseCategoryServices.createCourseCategoryIntoDB(payload);
+  const result = await CourseCategoryServices.createCourseCategoryIntoDB(
+    req.user,
+    req.body,
+  );
 
   sendResponse(
     res,
